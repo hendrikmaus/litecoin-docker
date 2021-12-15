@@ -1,0 +1,28 @@
+---
+name: Test
+
+on:
+  pull_request: ~
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+
+      - name: Install casey/just
+        uses: extractions/setup-just@aa5d15c144db4585980a44ebfdd2cf337c4f14cb
+
+      - name: Install rancher/k3d
+        run: |
+          docker run --rm curlimages/curl --fail-with-body --silent --retry 3 \
+            https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+
+      - name: Run test suite
+        run: |
+          just test clean
