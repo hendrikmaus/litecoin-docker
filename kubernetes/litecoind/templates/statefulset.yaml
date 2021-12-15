@@ -28,6 +28,10 @@ spec:
       serviceAccountName: {{ include "litecoind.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '1'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -46,6 +50,14 @@ spec:
           {{- if .Values.container.testnet }}
             - -testnet
           {{- end }}
+          readinessProbe:
+            tcpSocket:
+              {{- if .Values.container.testnet }}
+              port: {{ .Values.container.testnetPort }}
+              {{- else }}
+              port: {{ .Values.container.port }}
+              {{- end }}
+            initialDelaySeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

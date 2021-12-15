@@ -41,10 +41,10 @@ securityContext:
 container:
   command:
     - /usr/local/bin/litecoind
-  additionalArgs:
-
-    # listen to rpc connections for probes?
+  additionalArgs: []
+  port: 9333
   testnet: true
+  testnetPort: 19335
 
 resources:
   limits:
