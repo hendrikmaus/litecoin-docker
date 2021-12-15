@@ -28,6 +28,10 @@ spec:
       serviceAccountName: {{ include "litecoind.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '1'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
