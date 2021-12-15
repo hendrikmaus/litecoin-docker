@@ -3,6 +3,7 @@
 
 set export := true
 set dotenv-load := false
+set shell := ["bash", "-euo", "pipefail", "-c"]
 
 # call 'just' to get help
 @_default:
