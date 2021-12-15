@@ -69,19 +69,39 @@ deploy:
 
 # containerize, spawn ephemeral k8s cluster and deploy
 test: build-image
+  #!/usr/bin/env bash
+  set -euo pipefail
+
   just repository="{{repository}}" tag="{{tag}}" \
     start-k8s import-image | just _prefix "k8s-cluster"
   just repository="{{repository}}" tag="{{tag}}" \
     deploy | just _prefix "deploy"
-  @# ^ a slight shortcoming of casey/just v0.10 is that we need to manually
-  @# carry on any variables which could have been overridden and used by
-  @# recipes called using a sub-shell (see 'deploy' above, for example)
-  @# This is not required when using a recipe as direct dependency
-  @# as done with 'build-image' in this example.
-  @# The sub-shells are used to be able to prefix the output
-  @# for improved readability of the log output.
+  # ^ a slight shortcoming of casey/just v0.10 is that we need to manually
+  # carry on any variables which could have been overridden and used by
+  # recipes called using a sub-shell (see 'deploy' above, for example)
+  # This is not required when using a recipe as direct dependency
+  # as done with 'build-image' in this example.
+  # The sub-shells are used to be able to prefix the output
+  # for improved readability of the log output.
 
   just _wait-for-k8s "statefulset" "{{k8s-namespace}}" "litecoind"
+
+  # wait ~30seconds for the workload to start before retrieving logs of at least 1 pod
+  echo "[INFO] allow the application to work for at least 30 seconds ..."
+  sleep 30
+
+  lcd_logs=$(kubectl --namespace litecoin logs pod/litecoind-0 | just _prefix "litecoind-0")
+  echo "${lcd_logs}"
+
+  # assert that DNS errors are gone
+  #   see https://github.com/hendrikmaus/litecoin-docker/pull/1
+  if echo -n "${lcd_logs}" | grep -qF "Adding fixed seed nodes as DNS doesn't seem to be available."; then
+    echo "[ERROR] the workload experienced DNS issues"
+    exit 1
+  fi
+
+  echo ""
+  echo "[INFO] TESTS PASSED"
 
 # start a local kubernetes cluster
 start-k8s:
