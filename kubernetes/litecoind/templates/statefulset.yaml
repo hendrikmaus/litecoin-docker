@@ -50,6 +50,14 @@ spec:
           {{- if .Values.container.testnet }}
             - -testnet
           {{- end }}
+          readinessProbe:
+            tcpSocket:
+              {{- if .Values.container.testnet }}
+              port: {{ .Values.container.testnetPort }}
+              {{- else }}
+              port: {{ .Values.container.port }}
+              {{- end }}
+            initialDelaySeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
