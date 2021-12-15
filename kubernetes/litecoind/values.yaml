@@ -27,8 +27,8 @@ managedBy: Helm
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 65532
 
 securityContext:
   capabilities:
