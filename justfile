@@ -116,7 +116,11 @@ clean:
     echo "[INFO] decommissioning local kubernetes cluster"
     k3d cluster delete "{{cluster}}"
   fi
-  rm "${KUBECONFIG}" &>/dev/null || true
+
+  if [[ -v KUBECONFIG && -f "${KUBECONFIG}" ]]; then
+    echo "[INFO] removing kubernetes cluster credentials"
+    rm "${KUBECONFIG}" &>/dev/null || true
+  fi
 
 # Utility to wait for k8s resources and follow their rollout
 _wait-for-k8s type namespace name:
