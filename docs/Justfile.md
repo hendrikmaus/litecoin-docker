@@ -17,6 +17,7 @@ The `justfile` provides various recipes to:
 - [`helm`](https://helm.sh/) (`3.x`)
 - [`kubectl`](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - [`k3d`](https://k3d.io) (`5.x`)
+- [`grype`](https://github.com/anchore/grype)
 
 ### Optional
 

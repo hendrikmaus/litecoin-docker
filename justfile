@@ -53,6 +53,10 @@ build-image:
 push-image:
   docker push "{{image}}"
 
+# run security audit on the container image
+audit-image:
+  grype docker:"{{image}}"
+
 # render the kubernetes manifests
 render:
   helm template litecoind kubernetes/litecoind \
