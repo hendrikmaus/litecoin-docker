@@ -26,6 +26,11 @@ jobs:
           docker run --rm curlimages/curl --fail-with-body --silent --retry 3 \
             https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 
+      - name: Install grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh \
+            | sh -s -- -b /usr/local/bin
+
       - name: Run test suite
         run: |
           just test clean
